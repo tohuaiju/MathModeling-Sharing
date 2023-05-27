@@ -1,0 +1,44 @@
+Sub DeleteColumns()
+    Dim ws1 As Worksheet ' 第一个表
+    Dim ws2 As Worksheet ' 第二个表
+    Dim deleteRange As Range ' 要删除的列范围
+    Dim deleteCol As Range ' 单个要删除的列
+    Dim colNum As Long ' 要删除的列号
+    Dim lastRow As Long ' 第一个表的最后一行
+    Dim rowNum As Long ' 第二个表的最后一行
+    Dim i As Long ' 循环变量
+
+    ' 设置第一个表和第二个表
+    Set ws1 = ThisWorkbook.Sheets("Sheet1")
+    Set ws2 = ThisWorkbook.Sheets("Sheet2")
+
+    ' 获取第一个表的最后一行
+    lastRow = ws1.Cells(ws1.Rows.Count, 1).End(xlUp).Row
+
+    ' 获取第二个表的最后一行
+    rowNum = ws2.Cells(ws2.Rows.Count, 1).End(xlUp).Row
+
+    ' 循环遍历第二个表的第一列
+    For i = 1 To rowNum
+        ' 获取要删除的列号
+        colNum = ws2.Cells(i, 1).Value
+        
+        ' 检查要删除的列号是否在有效范围内
+        If colNum >= 1 And colNum <= ws1.Columns.Count Then
+            ' 获取要删除的列
+            Set deleteCol = ws1.Columns(colNum)
+            
+            ' 将要删除的列添加到删除范围
+            If deleteRange Is Nothing Then
+                Set deleteRange = deleteCol
+            Else
+                Set deleteRange = Union(deleteRange, deleteCol)
+            End If
+        End If
+    Next i
+
+    ' 删除列范围
+    If Not deleteRange Is Nothing Then
+        deleteRange.Delete Shift:=xlToLeft
+    End If
+End Sub
